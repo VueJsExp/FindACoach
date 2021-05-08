@@ -7,7 +7,7 @@
             <div class="controls">
                 <base-button mode="outline">Refresh</base-button>
                 <!-- <router-link to="/register">Register as Coach</router-link> -->
-                <base-button link to="/register">Register as Coach</base-button>
+                <base-button v-if="!isCoach" link to="/register">Register as Coach</base-button>
             </div>
             <ul v-if="hasCoaches">
                 <coach-item
@@ -66,7 +66,10 @@ export default {
                 return false;
             });
         },
-        ...mapGetters("coaches", ["hasCoaches"])
+        ...mapGetters("coaches", ["hasCoaches"]),
+        isCoach() {
+            return this.$store.getters["coaches/isCoach"];
+        }
     },
     methods: {
         setFilters(updatedFilters) {
