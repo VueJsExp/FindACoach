@@ -1,7 +1,9 @@
 export default {
     coaches(state) {
-        return state.coaches;
-    },
+                       // console.log("getter coaches()");
+                       // console.log(state.coaches);
+                       return state.coaches;
+                   },
     hasCoaches(state) {
         return state.coaches && state.coaches.length;
     },

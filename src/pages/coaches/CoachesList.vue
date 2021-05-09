@@ -1,15 +1,21 @@
 <template>
+    <base-dialog :show="!!error" @close="handleError" title="An error occured!">
+        <p>{{ error }}</p>
+    </base-dialog>
     <section>
         <coach-filter @change-filter="setFilters"/>
     </section>
     <section>
         <base-card>
             <div class="controls">
-                <base-button mode="outline">Refresh</base-button>
+                <base-button @click="loadCoaches" mode="outline">Refresh</base-button>
                 <!-- <router-link to="/register">Register as Coach</router-link> -->
-                <base-button v-if="!isCoach" link to="/register">Register as Coach</base-button>
+                <base-button v-if="!isCoach && !isLoading" link to="/register">Register as Coach</base-button>
             </div>
-            <ul v-if="hasCoaches">
+            <div v-if="isLoading">
+                <base-spinner />
+            </div>
+            <ul v-else-if="hasCoaches">
                 <coach-item
                     v-for="coach in filteredCoaches"
                     :id="coach.id"
@@ -33,7 +39,7 @@
 import CoachItem from "../../components/coaches/CoachItem.vue";
 import CoachFilter from "../../components/coaches/CoachFilter.vue";
 
-import { mapGetters } from "vuex";
+// import { mapGetters } from "vuex";
 export default {
     components: {
         CoachItem,
@@ -41,6 +47,8 @@ export default {
     },
     data() {
         return {
+            error: null,
+            isLoading: false,
             activeFilters: {
                 frontend: true,
                 backend: true,
@@ -66,14 +74,32 @@ export default {
                 return false;
             });
         },
-        ...mapGetters("coaches", ["hasCoaches"]),
+        // ...mapGetters("coaches", ["hasCoaches"]),
+        hasCoaches() {
+            return this.$store.getters["coaches/hasCoaches"] && !this.isLoading;
+        },
         isCoach() {
             return this.$store.getters["coaches/isCoach"];
         }
     },
+    created() {
+        this.loadCoaches();
+    },
     methods: {
         setFilters(updatedFilters) {
             this.activeFilters = updatedFilters;
+        },
+        async loadCoaches() {
+            this.isLoading = true;
+            try {
+                await this.$store.dispatch("coaches/loadCoaches");
+            } catch(error) {
+                this.error = error.message || "Something went wrong!";
+            }
+            this.isLoading = false;
+        },
+        handleError() {
+            this.error = null;
         }
     }
 };
