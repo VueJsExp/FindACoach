@@ -6,5 +6,8 @@ export default {
         // console.log("mutation setCoaches");
         // console.log(payload);
         state.coaches = payload;
+    },
+    setFetchTimestamp(state) {
+        state.lastFetch = new Date().getTime();
     }
 };

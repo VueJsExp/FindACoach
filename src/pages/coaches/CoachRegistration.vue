@@ -1,16 +1,18 @@
 <template>
-    <base-dialog v-show="!!error" @click="handleError" title="Registration is failed!">
-        <p>{{ error }}</p>
-    </base-dialog>
-    <section>
-        <div v-if="isLoading">
-            <base-spinner />
-        </div>
-        <base-card v-else>
-            <h2>Register as a coach now!</h2>
-            <coach-form @save-data="saveData" />
-        </base-card>
-    </section>
+    <div>
+        <base-dialog :show="!!error" @close="handleError" title="Registration is failed!">
+            <p>{{ error }}</p>
+        </base-dialog>
+        <section>
+            <div v-if="isLoading">
+                <base-spinner />
+            </div>
+            <base-card v-else>
+                <h2>Register as a coach now!</h2>
+                <coach-form @save-data="saveData" />
+            </base-card>
+        </section>
+    </div>
 </template>
 
 <script>
@@ -31,7 +33,7 @@ export default {
             this.isLoading = true;
             try {
                 await this.$store.dispatch("coaches/registerCoach", formData);
-            } catch(error)  {
+            } catch (error) {
                 this.error = error.message || "Something went wrong";
                 return;
             }
@@ -46,5 +48,4 @@ export default {
 };
 </script>
 
-<style>
-</style>
+<style></style>

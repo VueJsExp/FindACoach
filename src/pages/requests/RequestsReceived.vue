@@ -1,27 +1,29 @@
 <template>
-    <base-dialog :show="!!error" @close="handleError" title="Failed to load requests">
-        <p>{{ error }}</p>
-    </base-dialog>
-    <section>
-        <base-card>
-            <header>
-                <h2>Requests Received</h2>
-            </header>
-            <div v-if="isLoading">
-                <base-spinner />
-            </div>
-            <ul v-else-if="hasRequests && !isLoading">
-                <request-item
-                    v-for="request in receivedRequests"
-                    :id="request.id"
-                    :key="request.id"
-                    :email="request.userEmail"
-                    :message="request.message"
-                />
-            </ul>
-            <h3 v-else>You haven't received any requests yet!</h3>
-        </base-card>
-    </section>
+    <div>
+        <base-dialog :show="!!error" @close="handleError" title="Failed to load requests">
+            <p>{{ error }}</p>
+        </base-dialog>
+        <section>
+            <base-card>
+                <header>
+                    <h2>Requests Received</h2>
+                </header>
+                <div v-if="isLoading">
+                    <base-spinner />
+                </div>
+                <ul v-else-if="hasRequests && !isLoading">
+                    <request-item
+                        v-for="request in receivedRequests"
+                        :id="request.id"
+                        :key="request.id"
+                        :email="request.userEmail"
+                        :message="request.message"
+                    />
+                </ul>
+                <h3 v-else>You haven't received any requests yet!</h3>
+            </base-card>
+        </section>
+    </div>
 </template>
 
 <script>
@@ -50,7 +52,7 @@ export default {
             return this.$store.getters["requests/hasRequests"];
         }
     },
-    mounted() {
+    created() {
         this.loadRequests();
     },
     methods: {
@@ -58,7 +60,7 @@ export default {
             this.isLoading = true;
             try {
                 await this.$store.dispatch("requests/loadRequests");
-            } catch(error) {
+            } catch (error) {
                 this.error = error.message || "Something went wrong";
                 return;
             }
@@ -69,22 +71,22 @@ export default {
             this.error = null;
         }
     }
-}
+};
 </script>
 
 <style scoped>
 header {
-  text-align: center;
+    text-align: center;
 }
 
 ul {
-  list-style: none;
-  margin: 2rem auto;
-  padding: 0;
-  max-width: 30rem;
+    list-style: none;
+    margin: 2rem auto;
+    padding: 0;
+    max-width: 30rem;
 }
 
 h3 {
-  text-align: center;
+    text-align: center;
 }
 </style>

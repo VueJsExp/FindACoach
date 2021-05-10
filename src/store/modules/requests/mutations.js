@@ -4,8 +4,8 @@ export default {
         state.requests.push(payload);
     },
     setRequests(state, requests) {
-        console.log("mutations requests/setRequests");
-        console.log(requests);
+        // console.log("mutations requests/setRequests");
+        // console.log(requests);
         state.requests = requests;
     }
 };
