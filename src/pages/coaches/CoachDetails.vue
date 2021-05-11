@@ -27,10 +27,13 @@
                 <base-button link to="/">Return</base-button>
             </base-card>
         </section>
-    </div>
     <!-- DETAILS FOR COACH
+    с этим комменатрием прикол - transtion считает его доп элементом, и полностью ломается
+    если он вне <div>
     <router-view />
     <base-button link to="/coaches/c1/contact">Contact</base-button> -->
+
+    </div>
 </template>
 
 <script>

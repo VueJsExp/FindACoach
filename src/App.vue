@@ -5,6 +5,7 @@
             <component :is="slotProps.Component" />
         </transition>
     </router-view>
+    <!-- <router-view /> -->
 </template>
 
 <script>
