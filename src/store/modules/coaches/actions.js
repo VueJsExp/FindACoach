@@ -10,7 +10,9 @@ export default {
             hourlyRate: formData.rate
         };
 
-        const response = await fetch(`https://vue-http-demo-30060-default-rtdb.firebaseio.com/coaches/${userId}.json`, {
+        const token = context.rootGetters["auth/token"];
+
+        const response = await fetch(`https://vue-http-demo-30060-default-rtdb.firebaseio.com/coaches/${userId}.json?auth=${token}`, {
             method: "PUT",
             body: JSON.stringify(coachData)
         });

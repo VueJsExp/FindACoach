@@ -1,28 +1,38 @@
 <template>
-    <base-card>
-        <form @submit.prevent="submitForm">
-            <div class="form-control" :class="{ invalid: !email.isValid }">
-                <label for="email">E-mail</label>
-                <input 
-                    v-model.trim="email.val"
-                    type="email"
-                    id="email"
-                    @blur="clearValidity('email')">
-                <p v-if="!email.isValid">Please enter a valid e-mail.</p>
-            </div>
-            <div class="form-control" :class="{ invalid: !password.isValid }">
-                <label for="password">Password</label>
-                <input
-                    v-model.trim="password.val"
-                    type="password"
-                    id="password"
-                    @blur="clearValidity('password')">
-                <p v-if="!password.isValid">Password must not be empty and be at least 6 characters long.</p>
-            </div>
-            <base-button>{{ submitButtonCaption }}</base-button>
-            <base-button type="button" mode="flat" @click="switchAuthMode">{{ switchModeButtonCaption }}</base-button>
-        </form>
-    </base-card>
+    <div>
+        <base-dialog :show="!!error" @close="handleError" :title="errorTitle">
+            <p>{{ error }}</p>
+        </base-dialog>
+        <base-dialog :show="isLoading" fixed title="Authenticating...">
+            <base-spinner />
+        </base-dialog>
+        <base-card>
+            <form @submit.prevent="submitForm">
+                <div class="form-control" :class="{ invalid: !email.isValid }">
+                    <label for="email">E-mail</label>
+                    <input
+                        v-model.trim="email.val"
+                        type="email"
+                        id="email"
+                        @blur="clearValidity('email')">
+                    <p v-if="!email.isValid">Please enter a valid e-mail.</p>
+                </div>
+                <div class="form-control" :class="{ invalid: !password.isValid }">
+                    <label for="password">Password</label>
+                    <input
+                        v-model.trim="password.val"
+                        type="password"
+                        id="password"
+                        @blur="clearValidity('password')">
+                    <p v-if="!password.isValid">Password must not be empty and be at least 6 characters long.</p>
+                </div>
+                <base-button>{{ submitButtonCaption }}</base-button>
+                <base-button type="button" mode="flat" @click="switchAuthMode">{{
+                    switchModeButtonCaption
+                }}</base-button>
+            </form>
+        </base-card>
+    </div>
 </template>
 
 <script>
@@ -38,7 +48,9 @@ export default {
                 isValid: true
             },
             formIsValid: true,
-            mode: "login"
+            mode: "login",
+            isLoading: false,
+            error: null
         };
     },
     computed: {
@@ -47,6 +59,9 @@ export default {
         },
         switchModeButtonCaption() {
             return this.mode === "login" ? "Signup instead" : "Login instead";
+        },
+        errorTitle() {
+            return this.mode === "login" ? "Authentication is failed!" : "Registration is failed!";
         }
     },
     methods: {
@@ -64,18 +79,45 @@ export default {
                 this.formIsValid = false;
             }
         },
-        submitForm() {
+        async submitForm() {
             this.validateForm();
+            this.isLoading = true;
             if (!this.formIsValid) {
                 return;
             }
+            const actionPayload = {
+                email: this.email.val,
+                password: this.password.val
+            };
+            try {
+                if (this.mode === "signup") {
+                    await this.$store.dispatch("auth/signup", actionPayload);
+                } else {
+                    await this.$store.dispatch("auth/login", actionPayload);
+                }
+                const redirectUrl = "/" + (this.$route.query.redirect || "coaches");
+                this.$router.replace(redirectUrl);
+            } catch (error) {
+                const failMessageVariant = "Failed to " + this.mode === "login" ? "login." : "signup.";
+                this.error = error.message || failMessageVariant;
+                // console.log("catching error = " + error.message);
+                // this.handleError();
+                this.isLoading = false;
+                return;
+            }
+            this.isLoading = false;
+            // this.
         },
         switchAuthMode() {
             if (this.mode === "login") {
-                this.mode = "signup"
+                this.mode = "signup";
             } else {
                 this.mode = "login";
             }
+        },
+        handleError() {
+            this.isLoading = false;
+            this.error = null;
         }
     }
 };
@@ -123,5 +165,4 @@ textarea:focus {
 .invalid textarea {
     border: 1px solid red;
 }
-
 </style>

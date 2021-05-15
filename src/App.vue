@@ -13,7 +13,22 @@ import TheHeader from "./components/layout/TheHeader.vue";
 export default {
     components: {
         TheHeader
-    }
+    },
+    computed: {
+        didAutoLogout() {
+            return this.$store.getters["auth/didAutoLogout"];
+        }
+    },
+    watch: {
+        didAutoLogout(newValue, oldValue) {
+            if (newValue && newValue !== oldValue) {
+                this.$router.replace("/");
+            }
+        }
+    },
+    created() {
+        this.$store.dispatch("auth/autoLogin");
+    },
 };
 </script>
 

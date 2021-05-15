@@ -1,3 +1,4 @@
+// import { API_KEY } from "../auth/keys.js";
 export default {
     async contactCoach(context, payload) {
         // const requestId = new Date().toISOString();
@@ -42,10 +43,12 @@ export default {
     },
     async loadRequests(context) {
         const coachId = context.rootGetters.userId;
-        const response = await fetch(`https://vue-http-demo-30060-default-rtdb.firebaseio.com/requests/${coachId}.json`);
+        const token = context.rootGetters["auth/token"];
+        const response = await fetch(`https://vue-http-demo-30060-default-rtdb.firebaseio.com/requests/${coachId}.json?auth=${token}`);
         const responseData = await response.json();
 
         // console.log("action request/loadRequest");
+        // console.log(token);
         // console.log(responseData);
 
         if (!response.ok) {
