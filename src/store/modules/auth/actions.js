@@ -4,7 +4,7 @@ let timer;
 
 export default {
     async login(context, payload) {
-        console.log("action auth/login");
+        // console.log("action auth/login");
         // const response = await fetch(`https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${API_KEY}`, {
         //     method: "POST",
         //     body: JSON.stringify({
@@ -70,7 +70,7 @@ export default {
         if (mode !== "login") {
             url = `https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=${API_KEY}`;
         }
-        console.log("action auth/auth");
+        // console.log("action auth/auth");
 
         const response = await fetch(url, {
             method: "POST",
@@ -92,13 +92,13 @@ export default {
 
         const expiresIn = (Number(responseData.expiresIn)) * 1000;
         // const expiresIn = 5000;
-        console.log(responseData.expiresIn);
+        // console.log(responseData.expiresIn);
 
         const expirationDate = new Date().getTime() + expiresIn;
         localStorage.setItem("token", responseData.idToken);
         localStorage.setItem("userId", responseData.localId);
         localStorage.setItem("tokenExpiration", expirationDate);
-        console.log(expiresIn);
+        // console.log(expiresIn);
 
         timer = setTimeout(() => {
             context.dispatch("autoLogout");
